@@ -1,0 +1,148 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Holidays API",
+    "description": "Find Dates that are public holidays",
+    "version": "1.0.0"
+  },
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "basePath": "/v1",
+  "paths": {
+    "/holidays": {
+      "get": {
+        "summary": "Public Holidays",
+        "description": "The holidays endpoint provides information about the public holidays\nfor a country and a year\n",
+        "parameters": [
+          {
+            "name": "country",
+            "in": "query",
+            "description": "Where to search for public holidays. Defined as a lower case\n[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)\ncode e.g. uk, us etc.\n",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "year",
+            "in": "query",
+            "description": "year for which to return results",
+            "required": true,
+            "type": "number",
+            "format": "int32"
+          },
+          {
+            "name": "lang",
+            "in": "query",
+            "description": "language for the calendar information",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "maximum number of results to return, defaults to 50",
+            "required": false,
+            "type": "number",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "Holidays"
+        ],
+        "responses": {
+          "200": {
+            "description": "An array of holidays",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Holiday"
+              }
+            },
+            "examples": {
+              "application/json": {
+                "[object Object],[object Object],[object Object]": null
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "code": 404,
+                "message": "Not found",
+                "detail": "No public holidays found for the supplied parameters"
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "code": 500,
+                "message": "Server error",
+                "detail": "Unable to connect to the google calendar API"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Holiday": {
+      "type": "object",
+      "properties": {
+        "holdiayId": {
+          "type": "string",
+          "description": "Unique identifier representing a specific holiday for a specific country"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of holiday."
+        },
+        "day": {
+          "type": "number",
+          "format": "int32",
+          "description": "Day of the month the holiday falls on"
+        },
+        "month": {
+          "type": "number",
+          "format": "int32",
+          "description": "Month number (1 - 12) the holiday falls on"
+        },
+        "year": {
+          "type": "number",
+          "format": "int32",
+          "description": "Year in which the holiday falls"
+        }
+      }
+    },
+    "Error": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "detail": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
